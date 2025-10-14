@@ -70,6 +70,9 @@ struct prestamo_libro
 void menu_principal(int &);
 void ing_reg_catalogo();//ingresar_registro_catalogo
 
+//Funciones de validación
+bool regresar_menu(bool&, string&);//Regresar al menú principal
+
 int main()
 {
     //Muestra y lee los acentos de consola o desde el archivo .txt
@@ -78,6 +81,8 @@ int main()
     //Constantes
     //Variables
     int opc_usuario = 0;
+    string mensaje = "";
+    bool salir_programa = false;
 
     do
     {
@@ -89,7 +94,7 @@ int main()
             if(cin.fail())
             {
                 cin.clear();//Limpia el fallo del cin.fail()
-                cin.ignore(100 , '\n');//Ignora el buffer restante hasta el ENTER
+                cin.ignore(100, '\n'); //Ignora el buffer restante hasta el ENTER
                 throw runtime_error("Valor inválido, inténtelo de nuevo.");
 
             }
@@ -117,6 +122,28 @@ int main()
         case 5://Ver historial de préstamos.
             break;
         case 6://Salir.
+            mensaje = "¿Desea salir del programa?";
+            if(regresar_menu(salir_programa, mensaje))
+            {
+                system("CLS");//Limpia o borra pantalla.
+                //Linea superior
+                cout << left << setfill('=') << setw(36) << "=" << endl;// ancho pantalla 37 caracteres
+                //Título
+                cout << left << setfill(' ') << setw(36) << "        SALIENDO DEL SISTEMA" << endl;// ancho pantalla 36 caracteres
+                //Linea inferior
+                cout << left << setfill('=') << setw(36) << "=" << endl;// ancho pantalla 37 caracteres
+
+                //Opciones del menú
+                cout << left << setfill(' ') << setw(36) << "\nGracias por usar el Sistema de Biblioteca C++" << endl;
+                this_thread::sleep_for(chrono::seconds(1));//Detenemos el programa para mostrar el mensaje
+                cout << left << setfill(' ') << setw(36) << "\n¡Hasta pronto!" << endl;
+                this_thread::sleep_for(chrono::seconds(2));//Detenemos el programa para mostrar el mensaje
+            }
+            else
+            {
+                opc_usuario = 0;
+            }
+
             break;
         default://Dato fuera del rango
             system("CLS");//Limpia o borra pantalla.
@@ -157,4 +184,63 @@ void menu_principal(int &opc_usuario)
     cout << left << "\nIngrese una opción: ";
     cin >> opc_usuario;
 }//Fin de la función menu_principal
+/*
+Valida si el usuario desea regresar al menú principal
+*/
+bool regresar_menu(bool& salir_programa, string& mensaje)
+{
+    char opc_usuario = ' ';
 
+    //Do/While que repite la pregunta mientra el usuario digite un valor inválido
+    do
+    {
+        system("CLS");//Limpia o borra pantalla.
+        //Realizamos la pregunta de respuesta "Sí" o "No"
+        cout << "\n" + mensaje + " Digite 'S' para sí o 'N' para no." << endl;
+        cout << "R/: ";
+        //Validamos la respuesta del usuario media Try/Catch
+        try
+        {
+            cin >> opc_usuario;
+            //Convertimos lo ingresado por el usuario a mayúscula por cualquier duda
+            opc_usuario = toupper(opc_usuario);
+            if (cin.fail())
+            {
+                cin.clear();//Limpiamos el fallo del cin.fail()
+                cin.ignore(100, '\n');//Ignora el buffer restante hasta el ENTER
+                throw runtime_error("Entrada inválida: Digite 'S' para sí o 'N' para no.");
+            }
+
+            switch(opc_usuario)
+            {
+            case 'S':
+                //Responde sí a la pregunta realizada.
+                return true;
+                salir_programa = true;
+                break;
+            case 'N':
+                //Responde no a la pregunta realizada.
+                return false;
+                salir_programa = false;
+                break;
+            default://Opción por defautl
+                throw runtime_error("Entrada inválida: Digite 'S' para sí o 'N' para no.");
+                break;
+            }
+
+        }
+        catch(const exception& e)
+        {
+            system("CLS");//Limpia o borra pantalla.
+            //Imprimimos el error capturado
+            cerr << "Error: " << e.what() << endl;
+            this_thread::sleep_for(chrono::seconds(1));//Detenemos el programa para mostrar el mensaje
+        }
+
+
+
+    }
+    while(opc_usuario != 'S' && opc_usuario != 'N');
+
+    return false;
+}
