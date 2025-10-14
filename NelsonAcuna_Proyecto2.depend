@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1760419090 source:g:\mi unidad\uned\ii cuatrimestre 2025\codeblocks projects\nelsonacuna_proyecto2\main.cpp
+	<iostream>
+	<locale.h>
+	<iomanip>
+	<conio.h>
+	<vector>
+	<ctime>
+	<sstream>
+	<thread>
+	<chrono>
+	<windows.h>
+
