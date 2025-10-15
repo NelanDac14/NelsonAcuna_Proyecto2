@@ -46,6 +46,9 @@ https://en.cppreference.com/w/cpp/header/chrono.html
 #include <thread>//Para detener el ciclo del código durante una 'x' cantidad de segundos
 #include <chrono>//Para efectuar los segundos al thread
 #include <windows.h>//Para manejo del de acentos y caracteres especiales en entrada y salida en windows
+#include <fstream> //Para manejo de archivos
+#include <sstream> //Para manejo de cadenas
+#include <limits> //Para los numeric_limits
 
 using namespace std;
 //Estructuras de datos
@@ -66,12 +69,27 @@ struct prestamo_libro
 
 };
 
-//Funciones
-void menu_principal(int &);
+//Constantes de uso global
+const string arch_catalogo = "catalogo.txt";
+const string arch_prestamos = "prestamos.txt";
+
+//Funciones mínimas requeridas
+void cargar_catalogo();//Cargar catálogo disponible
+void guardar_Catalogo();//Guardar cambios en el catálogo
+void cargar_prestamos();//Cargar lista de préstamos
+void guardar_prestamos();//Guardar nuevo préstamo
+void mostrar_menu(int &);//Muestra el menú principal (Realizada)
 void ing_reg_catalogo();//ingresar_registro_catalogo
+void reg_nue_prestamo();//registrar_nuevo_prestamo
+void devolver_libro();//Realizar la devolución de libros a la biblioteca
+void historial_prestamos();//Ver el historial de préstamos
+
+//Funciones Extras
+void crea_arch_catalogo();
+void crea_arch_prestamos();
 
 //Funciones de validación
-bool regresar_menu(bool&, string&);//Regresar al menú principal
+bool regresar_menu(bool&, string&);//Procesar Opción S/N (Realizada)
 
 int main()
 {
@@ -89,7 +107,7 @@ int main()
         try
         {
             //Mostramos el menú y recibimos la opción del usuario
-            menu_principal(opc_usuario);
+            mostrar_menu(opc_usuario);
             //Si el cin entra en fallo (cin.fail()); limpiamos buffer
             if(cin.fail())
             {
@@ -112,10 +130,12 @@ int main()
         switch(opc_usuario)
         {
         case 1://Ingresar registro al catálogo.
+            crea_arch_catalogo();
             break;
         case 2://Mostrar catálogo.
             break;
         case 3://Registrar nuevo préstamo.
+            crea_arch_prestamos();
             break;
         case 4://Devolver libro.
             break;
@@ -162,7 +182,7 @@ int main()
 Muestra el Menú Principal y recibe la opción elegida
 por el usuario
 */
-void menu_principal(int &opc_usuario)
+void mostrar_menu(int &opc_usuario)
 {
     system("CLS");//Limpia o borra pantalla.
     //Linea superior
@@ -244,3 +264,65 @@ bool regresar_menu(bool& salir_programa, string& mensaje)
 
     return false;
 }
+
+
+/*
+Crea el archivo catálogo.txt y coloca los encabezados
+*/
+void crea_arch_catalogo()
+{
+    //Creamos el archivo de catálogo.txt
+    ofstream archivo(arch_catalogo, ios::app | ios::binary);
+    //Si el se creo correctamente
+    if(archivo.is_open())
+    {
+        archivo.seekp(0, ios::end); //Nos mueve el puntero a la ultima ubicacion del catálogo.txt
+        streampos pos_puntero = archivo.tellp();
+        // Verifica si el archivo está vacío para agregar encabezados
+        if (pos_puntero == 0)
+        {
+            //Agregamos los encabezados
+            //Linea separadora superior
+            archivo << left << setfill('=') << setw(132) << "=" << endl;
+            //Nombres de los encabezados
+            archivo << left << setfill(' ')<< setw(6) << "  ID"
+                    << "|" << setw(56) << "                         TÍTULO"
+                    << "|" << setw(55) << "                         AUTOR"
+                    << "|" << setw(11) << "DISPONIBLES"
+                    << "|" << endl;
+            //Linea separadora inferior
+            archivo << left << setfill('=') << setw(132) << "=" << endl;
+        }
+    }
+}
+
+/*
+Crea el archivo prestamos.txt y coloca los encabezados
+*/
+void crea_arch_prestamos()
+{
+    //Creamos el archivo de prestamos.txt
+    ofstream archivo(arch_prestamos, ios::app | ios::binary);
+    //Si el se creo correctamente
+    if(archivo.is_open())
+    {
+        archivo.seekp(0, ios::end); //Nos mueve el puntero a la ultima ubicacion del prestamos.txt
+        streampos pos_puntero = archivo.tellp();
+        // Verifica si el archivo está vacío para agregar encabezados
+        if (pos_puntero == 0)
+        {
+            //Agregamos los encabezados
+            //Linea separadora superior
+            archivo << left << setfill('=') << setw(86) << "=" << endl;
+            //Nombres de los encabezados
+            archivo << left << setfill(' ')<< setw(9) << "ALUMNO ID"
+                    << "|" << setw(55) << "                   NOMBRE DEL ALUMNO"
+                    << "|" << setw(8) << "LIBRO ID"
+                    << "|" << setw(10) << "  FECHA"
+                    << "|" << endl;
+            //Linea separadora inferior
+            archivo << left << setfill('=') << setw(86) << "=" << endl;
+        }
+    }
+}
+
