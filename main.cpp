@@ -299,6 +299,7 @@ bool regresar_menu(bool& salir_programa, string& mensaje)
     //Do/While que repite la pregunta mientra el usuario digite un valor inválido
     do
     {
+        system("CLS"); //Limpiamos pantalla
         //Realizamos la pregunta de respuesta "Sí" o "No"
         cout << "\n" + mensaje + " Digite 'S' para sí o 'N' para no." << endl;
         cout << "R/: ";
@@ -791,6 +792,11 @@ Nos provee la fecha y hora para los registros de las transacciones
 */
 void fecha(string& fecha)
 {
+    //Variables locales
+    string mensaje = "";
+    char modificar = ' ';
+    bool si_no = false;
+
     //Obtiene el tiempo actual en segundos
     time_t hora_actual = time(0);
     // Convierte el tiempo actual a una estructura tm con la fecha local
@@ -804,6 +810,43 @@ void fecha(string& fecha)
 
     //Asigna los valores formateados a las variables de salida
     fecha = char_fecha;
+
+    //Imprimimos la fecha
+    cout << fecha << endl;
+
+    system("PAUSE"); //Pausamos el programa al ENTER
+
+    // Preguntar si desea modificarla
+    mensaje = "¿Desea modificar la fecha? (S/N): ";
+    if(regresar_menu(si_no,mensaje))
+    {
+        string nueva_fecha = "";
+        bool formato_valido = false;
+
+        do {
+            system("CLS"); //Limpiamos pantalla
+            cout << "Ingrese la nueva fecha en formato (DD/MM/YYYY): ";
+            getline(cin, nueva_fecha);
+            // Validación básica de formato
+            if (nueva_fecha.length() == 10 &&
+                nueva_fecha[2] == '/' &&
+                nueva_fecha[5] == '/')
+            {
+                //El formato es valido = true
+                formato_valido = true;
+                //Asignamos la nueva fecha a la fecha que se mostrará
+                fecha = nueva_fecha;
+            }
+            else
+            {
+                //Asignamos el mensaje de error
+                mensaje =  "Formato inválido. Intente de nuevo.";
+                //Mostramos el error
+                mostrar_error(mensaje);
+            }
+        } //Repitase mientras formato valido = false
+        while (!formato_valido);
+    }
 }
 
 /**/
@@ -838,10 +881,30 @@ void info_prestamo(bool& volver_menu, string& id_alumno, string& id_libro, strin
         }//Fin do
         while(!id_correcto);
 
+        //Validación del nombre del alumno
+        mensaje_error = "No se ingresó ningún valor.";
+        mensa_dato = "Ingrese nombre del alumno: ";
+        val_nomb_tit(nomb_alumno, mensaje_error, mensa_dato);
+
+        //Validación del ID del libro
+        do
+        {
+            cout << left << setfill(' ') << "Ingrese el ID del libro (6 dígitos): ";
+            validar_id(id_libro, dig_id_libro, id_correcto);//Validamos que el id cumple con lo requrido
+
+        }//Fin do
+        while(!id_correcto);
+
+
+        //Imprimimos fecha
+        cout << "Ingrese fecha (DD/MM/YYYY): ";
+        fecha(fecha_prestamo);
+
+        //Añadimos el mensaje de regresar al menú
+        mensaje = "¿Desea regresar al menú principal?";
     }//Fin del Do
     while(!regresar_menu(volver_menu, mensaje));
 }
-
 
 /**/
 void cin_error()
