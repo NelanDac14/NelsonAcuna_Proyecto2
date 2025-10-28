@@ -94,7 +94,9 @@ void crea_arch_catalogo();//Crea el archivo de catálogo.txt (Realizada)
 void crea_arch_prestamos();//Crea el archivo de préstamos.txt (Realizada)
 void validar_id(string&, const int, bool&);//Valida el Id del alumno o del libro en caso de este proyecto (Realizada)
 void info_catalogo(bool&, string&, string&, string&, int&);
-
+void fecha(string &);//Función que brinda la fecha en formato: dd/mm/yyyy
+void info_prestamo(bool&, string&, string&, string&, string&);//Recauda la información necesaria para agragar un nuevo préstamo
+void cin_error();//Valida errores cada vez que se utiliza el cin
 //Funciones de Booleanas
 bool regresar_menu(bool&, string&);//Procesar Opción S/N (Realizada)
 bool buscar_id(const string&);//Valida id del catálogo de libros (Realizada)
@@ -152,20 +154,21 @@ int main()
             info_catalogo(salir_programa, id_libro, titulo_libro, autor_libro, copias_disponibles);
             break;
         case 2://Mostrar catálogo.
-                system("CLS");//Limpia o borra pantalla.
-                //Linea superior
-                cout << left << setfill('=') << setw(132) << "=" << endl;// ancho pantalla 37 caracteres
-                //Título
-                cout << left << setfill(' ') << setw(132) << "                                                   CATÁLOGO DE LA BIBLIOTECA C++" << endl;// ancho pantalla 36 caracteres
+            system("CLS");//Limpia o borra pantalla.
+            //Linea superior
+            cout << left << setfill('=') << setw(132) << "=" << endl;// ancho pantalla 37 caracteres
+            //Título
+            cout << left << setfill(' ') << setw(132) << "                                                   CATÁLOGO DE LA BIBLIOTECA C++" << endl;// ancho pantalla 36 caracteres
 
-                //Mostramos el catálogo disponible
-                mostrar_catalogo(arch_catalogo);
+            //Mostramos el catálogo disponible
+            mostrar_catalogo(arch_catalogo);
 
-                cout << "\n\nPresione ENTER para regresar al menú" << endl;
-                system("PAUSE");//Presionar ENTER para regresar al menú
+            cout << "\n\nPresione ENTER para regresar al menú" << endl;
+            system("PAUSE");//Presionar ENTER para regresar al menú
             break;
         case 3://Registrar nuevo préstamo.
             crea_arch_prestamos();
+            info_prestamo(salir_programa, id_alunmo, id_libro, nombre_alumno, fecha_prestamo);
             break;
         case 4://Devolver libro.
             break;
@@ -283,11 +286,9 @@ void mostrar_menu(int &opc_usuario)
     //Solicitamos la opción al usuario
     cout << left << "\nIngrese una opción: ";
     cin >> opc_usuario;
-
-    // Limpieza previa del búfer para evitar entradas residuales
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin_error();
 }//Fin de la función menu_principal
+
 /*
 Valida si el usuario desea regresar al menú principal
 */
@@ -306,9 +307,7 @@ bool regresar_menu(bool& salir_programa, string& mensaje)
         {
             //Recibimos la opción del usuario
             cin >> opc_usuario;
-            // Limpieza previa del búfer para evitar entradas residuales
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin_error();
 
             //Convertimos lo ingresado por el usuario a mayúscula por cualquier duda
             opc_usuario = toupper(opc_usuario);
@@ -339,9 +338,7 @@ bool regresar_menu(bool& salir_programa, string& mensaje)
         {
             system("CLS");//Limpia o borra pantalla.
 
-            // Limpieza previa del búfer para evitar entradas residuales
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin_error();
 
             //Imprimimos el error capturado
             cerr << "Error: " << e.what() << endl;
@@ -427,10 +424,7 @@ void validar_id(string& id, const int cant_digitos, bool& id_correcto)
     try
     {
         //Recibimos el id
-        cin >> id;
-        // Limpieza previa del búfer para evitar entradas residuales
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        getline(cin, id);
 
         // Verifica si ocurrió un error en la entrada
         if (cin.fail())
@@ -461,10 +455,6 @@ void validar_id(string& id, const int cant_digitos, bool& id_correcto)
     }
     catch (const runtime_error& e)
     {
-        // Restablece el estado del flujo de entrada
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Reinicia el valor del ID y su estado
         id = "";
         id_correcto = false;
@@ -483,9 +473,9 @@ void info_catalogo(bool& volver_menu, string& id_libro, string& tit_libro, strin
 {
     //creamos un vector para almacenar la información de nuevos libros
     vector<info_libro_catalogo> nuevo_libro;
-    string mensa_dato;//Mensaje del dato que se solicita al usuario
-    string mensaje;//Mensaje de validar SÍ o NO
-    string mensaje_error;//Mensaje de error
+    string mensa_dato = "";//Mensaje del dato que se solicita al usuario
+    string mensaje = "";//Mensaje de validar SÍ o NO
+    string mensaje_error = "";//Mensaje de error
     bool id_correcto = false;//Estado de la comprobación del ID conrrespondiente (libro o estudiante)
 
     //Repite hasta que el usuario decida regresar al menú principal
@@ -546,7 +536,8 @@ void info_catalogo(bool& volver_menu, string& id_libro, string& tit_libro, strin
             try
             {
                 cin >> copias_dis;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin_error();
+
                 if(cin.fail())//dato diferente a tipo int
                 {
                     // Limpieza previa del búfer para evitar entradas residuales
@@ -795,4 +786,78 @@ bool solo_digitos(const string& texto)
     return true;
 }
 
+/*
+Nos provee la fecha y hora para los registros de las transacciones
+*/
+void fecha(string& fecha)
+{
+    //Obtiene el tiempo actual en segundos
+    time_t hora_actual = time(0);
+    // Convierte el tiempo actual a una estructura tm con la fecha local
+    tm* tiempo = localtime(&hora_actual);//"tm" significa time
+
+    //Arreglos de caracteres para almacenar la fecha formateadas
+    char char_fecha[9];
+
+    //Formatea la fecha usando la estructura de tiempo local
+    strftime(char_fecha, size(char_fecha), "%d/%m/%y", tiempo);//Formateamos la fecha strftime(buffer[x], maxSiza, format, timeStruct)
+
+    //Asigna los valores formateados a las variables de salida
+    fecha = char_fecha;
+}
+
+/**/
+void info_prestamo(bool& volver_menu, string& id_alumno, string& id_libro, string& nomb_alumno, string& fecha_prestamo)
+{
+    //creamos un vector para almacenar la información de nuevos libros
+    vector<info_libro_catalogo> nuevo_libro;
+    string mensa_dato = "";//Mensaje del dato que se solicita al usuario
+    string mensaje = "";//Mensaje de validar SÍ o NO
+    string mensaje_error = "";//Mensaje de error
+    bool id_correcto = false;//Estado de la comprobación del ID conrrespondiente (libro o estudiante)
+
+    do
+    {
+        system("CLS");//Limpia o borra pantalla.
+        //Agregamos el título de la pantalla ancho = 39
+        //Linea separadora superior
+        cout << left << setfill('=') << setw(39) << "=" << endl;
+        //Título de la pantalla
+        cout << left << setfill(' ')<< setw(39) << "       REGISTRAR NUEVO PRÉSTAMO" << endl;//24 Caracteres
+        //Linea separadora inferior
+        cout << left << setfill('=') << setw(39) << "=" << endl;
+
+        //Estructura del préstamo
+
+        //Validación del ID del alumno
+        do
+        {
+            cout << left << setfill(' ') << "\nIngrese el ID de alumno (9 dígitos): ";
+            validar_id(id_libro, dig_id_alumno, id_correcto);//Validamos que el id cumple con lo requrido
+
+        }//Fin do
+        while(!id_correcto);
+
+    }//Fin del Do
+    while(!regresar_menu(volver_menu, mensaje));
+}
+
+
+/**/
+void cin_error()
+{
+    if(cin.fail())
+    {
+        // Limpieza previa del búfer para evitar entradas residuales
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    if(cin.peek() == '\n')
+    {
+        //Ignoramos el búfer del cin anterior
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+}
 //

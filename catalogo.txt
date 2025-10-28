@@ -16,3 +16,5 @@
 173928|Caballo Prieto                                          |Logan Filandes                                         |2          |
 562389|El portico de la vecinda                                |Felipe Gallo                                           |9          |
 147823|Caballito de mar                                        |Nelson Meléndez                                        |9          |
+456328|Estados Unidos de América                               |Leo Smith                                              |1          |
+453278|El pollito maicero                                      |Nelson Acuña Cambronero                                |2          |
