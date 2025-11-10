@@ -2,19 +2,5 @@
   ID  |                         TÍTULO                         |                         AUTOR                         |DISPONIBLES|
 ====================================================================================================================================
 000123|El Principito                                           |Antoine de Saint-Exupéry                               |4          |
-000456|Cien años de soledad                                    |Gabriel García Márquez                                 |2          |
-000789|1984                                                    |George Orwell                                          |5          |
-141296|Amados pero no deseados                                 |Nelson Andrés Acuña Cambronero                         |6          |
-789456|El poder de la oración                                  |Nelson Acuña Cambronero                                |9          |
-123641|La Odisea                                               |Anónimo                                                |7          |
-459632|El poeta                                                |Andrea García                                          |4          |
-125644|El perdido de Narnia                                    |Poligloe Fernández                                     |4          |
-137964|El pordiosero                                           |Artur Ballenato                                        |6          |
-159632|Empresarios del Norte                                   |Felipe Ovando                                          |6          |
-153957|El Tomate                                               |Nelson Mandela                                         |7          |
-758152|La guayaba                                              |Andrey Madrigal                                        |6          |
-173928|Caballo Prieto                                          |Logan Filandes                                         |2          |
-562389|El portico de la vecinda                                |Felipe Gallo                                           |9          |
-147823|Caballito de mar                                        |Nelson Meléndez                                        |9          |
-456328|Estados Unidos de América                               |Leo Smith                                              |1          |
-453278|El pollito maicero                                      |Nelson Acuña Cambronero                                |2          |
+000456|Cien años de soledad                                    |Grabiel García Márquez                                 |1          |
+000789|1984                                                    |George Orwell                                          |4          |
